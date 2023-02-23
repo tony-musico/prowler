@@ -4,9 +4,8 @@ import re
 
 
 class LambdaRuntimeSettings:
-    _settings = os.path.exists("awslambda_runtime_settings.json") \
-        and json.loads("awslambda_runtime_settings.json") \
-        or {}
+    _settings_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), "awslambda_runtime_settings.json")
+    _settings = os.path.exists(_settings_file) and json.loads(_settings_file) or {}
 
     @classmethod
     def get(cls, runtime):
