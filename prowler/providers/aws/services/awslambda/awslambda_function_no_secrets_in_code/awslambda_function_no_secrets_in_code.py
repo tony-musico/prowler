@@ -4,6 +4,7 @@ import tempfile
 from detect_secrets import SecretsCollection
 from detect_secrets.settings import default_settings
 
+from providers.aws.services.awslambda.awslambda_runtime_settings import LambdaRuntimeSettings
 from prowler.lib.check.models import Check, Check_Report_AWS
 from prowler.providers.aws.services.awslambda.awslambda_client import awslambda_client
 
@@ -18,6 +19,8 @@ class awslambda_function_no_secrets_in_code(Check):
                 report.resource_id = function.name
                 report.resource_arn = function.arn
 
+                lambda_runtime = LambdaRuntimeSettings.get(function.runtime)
+
                 report.status = "PASS"
                 report.status_extended = (
                     f"No secrets found in Lambda function {function.name} code"
@@ -26,8 +29,9 @@ class awslambda_function_no_secrets_in_code(Check):
                     function.code.code_zip.extractall(tmp_dir_name)
                     # List all files
                     files_in_zip = next(os.walk(tmp_dir_name))[2]
+                    filtered_files = lambda_runtime.files_to_scan(files_in_zip)
                     secrets_findings = []
-                    for file in files_in_zip:
+                    for file in filtered_files:
                         secrets = SecretsCollection()
                         with default_settings():
                             secrets.scan_file(f"{tmp_dir_name}/{file}")
