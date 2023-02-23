@@ -4,7 +4,7 @@ import tempfile
 from detect_secrets import SecretsCollection
 from detect_secrets.settings import default_settings
 
-from providers.aws.services.awslambda.awslambda_runtime_settings import LambdaRuntimeSettings
+from prowler.providers.aws.services.awslambda.awslambda_runtime_settings import LambdaRuntimeSettings
 from prowler.lib.check.models import Check, Check_Report_AWS
 from prowler.providers.aws.services.awslambda.awslambda_client import awslambda_client
 
